@@ -8,4 +8,4 @@ from flask import jsonify as jsny
 def getStat():
     """returns the status of the API if working"""
     goodStat = {"status": "OK"}
-    return jsny({goodStat)
+    return jsny(goodStat)
