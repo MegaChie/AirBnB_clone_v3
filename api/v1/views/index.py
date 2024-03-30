@@ -22,17 +22,17 @@ def counter():
     from models.review import Review
     from models.state import State
     from models.user import User
-        
+
     # look up dict
     classes = {"amenities": Amenity, "cities": City,
-                "places": Place, "reviews": Review,
-                "states": State, "users": User}
+               "places": Place, "reviews": Review,
+               "states": State, "users": User}
     # empty dict to fill using the method
     clasCount = {}
     for name, cls in classes.items():
         clasCount.update({name: storage.count(cls)})
-    return json.dumps(clasCount, indent=2), {"Content-Type": "application/json"}
-
+    return (json.dumps(clasCount, indent=2),
+            {"Content-Type": "application/json"})
 
 
 @app_views.after_request
