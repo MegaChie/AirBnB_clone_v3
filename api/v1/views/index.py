@@ -30,7 +30,7 @@ def counter():
     # empty dict to fill using the method
     clasCount = {}
     for name, cls in classes.items():
-        clasCount[name] = storage.count(cls)
+        clasCount.update({name: storage.count(cls)})
     return json.dumps(clasCount, indent=2), {"Content-Type": "application/json"}
 
 
