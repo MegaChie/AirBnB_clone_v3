@@ -9,7 +9,8 @@ import json
 def getStat():
     """returns the status of the API if working"""
     goodStat = {"status": "OK"}
-    return json.dumps(goodStat, indent=2), {"Content-Type": "application/json"}
+    return (json.dumps(goodStat, indent=2),
+            {"Content-Type": "application/json"})
 
 
 @app_views.route('/stats')
@@ -31,7 +32,7 @@ def counter():
     clasCount = {}
     for name, cls in classes.items():
         clasCount.update({name: storage.count(cls)})
-    return (json.dumps(clasCount, indent=2),
+    return (json.dumps(goodStat, indent=2),
             {"Content-Type": "application/json"})
 
 
