@@ -39,8 +39,8 @@ def counter():
 #            {"Content-Type": "application/json"})
 
 
-@app_views.after_request
-def add_newline(response):
-    if response.is_json:
-        response.data += b'\n'
-    return response
+#@app_views.after_request
+#def add_newline(response):
+ #   if response.is_json:
+  #      response.data += b'\n'
+   # return response
