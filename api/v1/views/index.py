@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """Gives the API its status"""
 from api.v1.views import app_views
+import json
 from flask import jsonify as jsny
 
 
@@ -8,4 +9,4 @@ from flask import jsonify as jsny
 def getStat():
     """returns the status of the API if working"""
     goodStat = {"status": "OK"}
-    return jsny(goodStat)
+    return json.dumps(goodStat, indent=2), {"Content-Type": "application/json"}
