@@ -14,7 +14,6 @@ app = fl(__name__)
 app.register_blueprint(app_views)
 
 
-
 @app.errorhandler(404)
 def pageNotFound(error):
     """Handels the 404 page"""
