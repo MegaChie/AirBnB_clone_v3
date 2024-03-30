@@ -9,7 +9,7 @@ import json
 @app_views.route('/status', strict_slashes=False)
 def getStat():
     """returns the status of the API if working"""
-    goodStat = {"status": "OK"}
+    goodStat = {'status': 'OK'}
     return jsny(goodStat), 200
 #    return (json.dumps(goodStat, indent=2),
  #           {"Content-Type": "application/json"}, 200)
