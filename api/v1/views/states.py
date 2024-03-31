@@ -7,6 +7,7 @@ from api.v1.views import app_views
 from flask import abort
 from flask import request as req
 import json
+from flask import jsonify as jsny
 from models import storage
 
 
@@ -59,7 +60,7 @@ def stateEdit(state_id=None):
             storage.save()
             emptData = {}
             return (json.dumbs(emptData),
-                    {"Content-Type": "application/json"}, 200)
+                    {"Content-Type": "application/json"}), 200
         except KeyError:
             # No object with such ID
             abort(404)
@@ -76,8 +77,10 @@ def stateEdit(state_id=None):
                 storage.new(newState)
                 storage.save()
                 data = newState.to_dict()
-                return (json.dumps(data, indent=2),
-                        {"Content-Type": "application/json"}), 201
+                # return (json.dumps(data, indent=2),
+                        # {"Content-Type": "application/json"}), 201
+                # Sadly, i can not prettify it
+                return jsny(data), 201
             else:
                 abort(400, "Missing name")
         else:
