@@ -21,6 +21,10 @@ def stateEdit(state_id=None):
              Or one object if ID is passed.
       - DELETE: Deletes object what have the passed ID.
                 Or returns 404 page if no ID passed.
+      - POST: Add a new state object if name provided.
+              Returns error code if not.
+      - PUT: Update object if name provided.
+             Returns error code if not.
     """
     # Importing needed files
     from models.state import State
@@ -38,79 +42,56 @@ def stateEdit(state_id=None):
            # return (json.dumps(data, indent=2, sort_keys=True),
             #        {"Content-Type": "application/json"})
             return jsny(data)
-        # When there"s an ID
         seek = "State." + state_id
-        # Search for the value
         try:
-            found = fullList[seek].to_dict()
-           # return (json.dumps(found, indent=2, sort_keys=True),
-            #        {"Content-Type": "application/json"})
-            return jsny(found)
+            data = fullList[seek].to_dict()
+            return jsny(data)
         except KeyError:
             abort(404)
 
     # Using HTTP DELETE
     elif req.method == "DELETE":
-        # No ID passed
-        if not state_id:
-            abort(404)
-        # ID passed
         try:
             seek = "State." + state_id
-            # If found object with such ID
             storage.delete(fullList[seek])
             storage.save()
             emptData = {}
-            # return (json.dumbs(emptData),
-             #       {"Content-Type": "application/json"}), 200
             return jsny(emptData), 200
-        except KeyError:
-            # No object with such ID
+        except Exception:
             abort(404)
 
     # Using HTTP POST
     elif req.method == "POST":
-        # Checking the heads passed
-        if req.get_json:
-            # If it's valid, save it
+        if req.is_json:
             new = req.get_json()
-            # Use it
-            if "name" in new:
-                newState = State(**new)
-                storage.new(newState)
-                storage.save()
-                data = newState.to_dict()
-                # return (json.dumps(data, indent=2),
-                #         {"Content-Type": "application/json"}), 201
-                # Sadly, i can not prettify it
-                return jsny(data), 201
-            else:
-                abort(400, "Missing name")
         else:
-            # Abort!
             abort(400, "Not a JSON")
+        if "name" in new:
+            newState = State(**new)
+            storage.new(newState)
+            storage.save()
+            data = newState.to_dict()
+            return jsny(data), 201
+        else:
+            abort(400, "Missing name")
 
     # Using HTTP PUT
     elif req.method == "PUT":
-        # The one we are editing
         seek = "State." + state_id
         try:
-            toEdit = fullList[seek]
+            found = fullList[seek]
             if req.is_json:
-                new = req.get_json()
-                for key, valu in new.items():
-                    if (key != "id" and key != "created_at" and
-                       key != "updated_at"):
-                        setattr(toEdit, key, valu)
-                storage.save()
-                data = toEdit.to_dict()
-                # return (json.dumps(data, indent=2),
-                #        {"Content-Type": "application/json"}), 200
-                # Sadly, i can not prettify it
-                return jsny(data), 201
+                toEdit = req.get_json()
             else:
-                abort(400, 'Not a JSON')
+                abort(400, "Not a JSON")
+            for key, valu in new.items():
+                if key not in ["id", "created_at", "updated_at"]:
+                    setattr(found, key, valu)
+            storage.save()
+            data = found.to_dict()
+            return jsny(data), 200
         except KeyError:
             abort(404)
+
     else:
         abort(501)
