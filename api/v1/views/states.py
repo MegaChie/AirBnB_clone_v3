@@ -109,3 +109,5 @@ def stateEdit(state_id=None):
                 abort(400, 'Not a JSON')
         except KeyError:
             abort(404)
+    else:
+        abort(501)

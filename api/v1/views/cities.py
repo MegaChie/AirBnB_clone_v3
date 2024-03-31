@@ -12,7 +12,7 @@ from models.city import City
 def cityAPI(state_id):
     """
     GET: Retrieves the list of all City objects if no ID is passed.
-         Or all the cities in a sertain state if an ID is passed.
+        Or all the cities in a sertain state if an ID is passed.
     """
     # All states and Cities
     fullState = storage.all(State)
@@ -20,15 +20,14 @@ def cityAPI(state_id):
 
     # Using HTTP GET
     if req.method == "GET":
-        #seek = "State." + state_id
-        #try:
-         #   data = []
-          #  found = fullState[seek]
-            # data = [city.to_dict() for city in found.fullCity]
-           # for city in found.fullCity:
-            #    entry = city.to_dict()
-             #   data.append(entry)
-            #retrun (json.dumps(data, indent=2),
-             #       {"Content-Type": "application/json"})
-        #except KeyError:
-          #  abort(404)
+        seek = "State." + state_id
+        try:
+            data = []
+            found = fullState[seek]
+            for city in found.fullCity:
+                entry = city.to_dict()
+                data.append(entry)
+                retrun (json.dumps(data, indent=2),
+                {"Content-Type": "application/json"})
+        except KeyError:
+            abort(404)
