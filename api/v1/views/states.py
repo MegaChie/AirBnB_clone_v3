@@ -97,8 +97,8 @@ def stateEdit(state_id=None):
                 new = req.get_json()
                 for key, valu in new.items():
                     if (key != "id" and key != "created_at" and
-                        key != "updated_at"):
-                            setattr(toEdit, key, valu)
+                       key != "updated_at"):
+                        setattr(toEdit, key, valu)
                 storage.save()
                 data = toEdit.to_dict()
                 # return (json.dumps(data, indent=2),
