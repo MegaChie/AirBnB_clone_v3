@@ -78,7 +78,7 @@ def stateEdit(state_id=None):
                 storage.save()
                 data = newState.to_dict()
                 # return (json.dumps(data, indent=2),
-                        # {"Content-Type": "application/json"}), 201
+                #         {"Content-Type": "application/json"}), 201
                 # Sadly, i can not prettify it
                 return jsny(data), 201
             else:
