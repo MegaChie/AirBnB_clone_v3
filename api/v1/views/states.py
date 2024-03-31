@@ -47,7 +47,7 @@ def stateEdit(state_id=None):
             abort(404)
 
     # Using HTTP DELETE
-    if req.method == "DELETE":
+    elif req.method == "DELETE":
         # No ID passed
         if not state_id:
             abort(404)
@@ -65,21 +65,21 @@ def stateEdit(state_id=None):
             abort(404)
 
     # Using HTTP POST
-    if req.method == "POST":
+    elif req.method == "POST":
         # Checking the heads passed
         if req.get_json:
             # If it's valid, save it
             new = req.get_json()
-            # Useing it
-            if "name" in new:
-                newState = State(**new)
-                storage.new(newState)
-                storage.save()
-                data = newState.to_dict()
-                return (json.dumps(data, indent=2),
-                        {"Content-Type": "application/json"}), 201
-            else:
-                abort(400, "Missing name")
         else:
             # Abort!
             abort(400, "Not a JSON")
+        # Useing it
+        if "name" in new:
+            newState = State(**new)
+            storage.new(newState)
+            storage.save()
+            data = newState.to_dict()
+            return (json.dumps(data, indent=2),
+                    {"Content-Type": "application/json"}), 201
+        else:
+            abort(400, "Missing name")
