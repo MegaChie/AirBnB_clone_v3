@@ -10,7 +10,7 @@ import json
 from models import storage
 
 
-@app_views.route("/states", methods=["GET"], strict_slashes=False)
+@app_views.route("/states", methods=["GET", "POST"], strict_slashes=False)
 @app_views.route("/states/<state_id>", methods=["GET", "DELETE"],
                  strict_slashes=False)
 def stateEdit(state_id=None):
@@ -45,7 +45,7 @@ def stateEdit(state_id=None):
                     {"Content-Type": "application/json"})
         except KeyError:
             abort(404)
-    
+
     # Using HTTP DELETE
     if req.method == "DELETE":
         # No ID passed
@@ -63,3 +63,23 @@ def stateEdit(state_id=None):
         except KeyError:
             # No object with such ID
             abort(404)
+
+    # Using HTTP POST
+    if req.method == "POST":
+        # Checking the heads passed
+        if req.get_json:
+            # If it's valid, save it
+            new = req.get_json()
+            # Useing it
+            if "name" in new:
+                newState = State(**new)
+                storage.new(newState)
+                storage.save()
+                data = newState.to_dict()
+                return (json.dumps(data, indent=2),
+                        {"Content-Type": "application/json"}), 201
+            else:
+                abort(400, "Missing name")
+        else:
+            # Abort!
+            abort(400, "Not a JSON")
