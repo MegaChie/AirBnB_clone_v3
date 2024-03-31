@@ -39,7 +39,7 @@ def stateEdit(state_id=None):
             for name in fullList.values():
                 entry = name.to_dict()
                 data.append(entry)
-           # return (json.dumps(data, indent=2, sort_keys=True),
+            # return (json.dumps(data, indent=2, sort_keys=True),
             #        {"Content-Type": "application/json"})
             return jsny(data)
         seek = "State." + state_id
