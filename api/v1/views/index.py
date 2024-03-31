@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 """Gives the API its status"""
 from api.v1.views import app_views
-from flask import jsonify as jsny
 from models import storage
 import json
 
@@ -10,7 +9,6 @@ import json
 def getStat():
     """returns the status of the API if working"""
     goodStat = {'status': 'OK'}
-#    return jsny(goodStat), 200
     return (json.dumps(goodStat, indent=2),
             {"Content-Type": "application/json"})
 
@@ -34,7 +32,6 @@ def counter():
     clasCount = {}
     for name, cls in classes.items():
         clasCount.update({name: storage.count(cls)})
- #   return jsny(clasCount), 200
     return (json.dumps(clasCount, indent=2),
             {"Content-Type": "application/json"})
 
