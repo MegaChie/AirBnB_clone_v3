@@ -3,6 +3,7 @@
 3. Status of your API
 The first endpoint that returns the status of your API
 """
+from os import getenv
 from flask import Flask as fl
 import json
 from models import storage
@@ -29,4 +30,7 @@ def sessEnd(error):
 
 
 if __name__ == "__main__":
+    if getenv("HBNB_API_HOST") and getenv("HBNB_API_PORT"):
+        app.run(host=str(getenv("HBNB_API_HOST")), port=int(getenv("HBNB_API_PORT")),
+                threaded=True)
     app.run(host="0.0.0.0", port=5000, threaded=True)
