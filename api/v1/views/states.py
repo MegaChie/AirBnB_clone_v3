@@ -36,7 +36,7 @@ def stateEdit(state_id=None):
                 data.append(entry)
             return (json.dumps(data, indent=2, sort_keys=True),
                     {"Content-Type": "application/json"})
-        # When there's an ID
+        # When there"s an ID
         seek = "State." + state_id
         # Search for the value
         try:

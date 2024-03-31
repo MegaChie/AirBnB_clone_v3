@@ -13,7 +13,7 @@ def getStat():
             {"Content-Type": "application/json"})
 
 
-@app_views.route('/stats', strict_slashes=False)
+@app_views.route("/stats", strict_slashes=False)
 def counter():
     """Build a dict of classes count using the count method"""
     # importing classes
