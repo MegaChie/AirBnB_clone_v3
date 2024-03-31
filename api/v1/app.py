@@ -5,7 +5,7 @@ The first endpoint that returns the status of your API
 """
 from os import getenv
 from flask import Flask as fl
-import json
+from flask import jsonify as jsny
 from models import storage
 from api.v1.views import app_views
 
@@ -19,8 +19,7 @@ app.register_blueprint(app_views)
 def pageNotFound(error):
     """Handels the 404 page"""
     badStat = {"error": "Not found"}
-    data = json.dumps(badStat, indent=2)
-    return data, {"Content-Type": "application/json"}
+    return jsny(badStat), 404
 
 
 @app.teardown_appcontext
