@@ -10,8 +10,8 @@ from sqlalchemy.orm import relationship
 
 class User(BaseModel, Base):
     """Representation of a user """
-    if models.storage_t == 'db':
-        __tablename__ = 'users'
+    if models.storage_t == "db":
+        __tablename__ = "users"
         email = Column(String(128), nullable=False)
         password = Column(String(128), nullable=False)
         first_name = Column(String(128), nullable=True)
@@ -27,3 +27,6 @@ class User(BaseModel, Base):
     def __init__(self, *args, **kwargs):
         """initializes user"""
         super().__init__(*args, **kwargs)
+        if self.password:
+            encrPass = hashlib.md5(self.password.encode("utf-8"))
+            self.password = encrPass.hexdigest()

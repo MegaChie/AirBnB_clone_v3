@@ -29,9 +29,9 @@ class BaseModel:
     def __init__(self, *args, **kwargs):
         """Initialization of the base model"""
         if kwargs:
-            for key, value in kwargs.items():
+            for key, valu in kwargs.items():
                 if key != "__class__":
-                    setattr(self, key, value)
+                    setattr(self, key, valu)
             if kwargs.get("created_at", None) and type(self.created_at) is str:
                 self.created_at = datetime.strptime(kwargs["created_at"], time)
             else:
