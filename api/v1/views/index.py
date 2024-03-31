@@ -10,9 +10,9 @@ import json
 def getStat():
     """returns the status of the API if working"""
     goodStat = {'status': 'OK'}
-    return jsny(goodStat), 200
-#    return (json.dumps(goodStat, indent=2),
- #           {"Content-Type": "application/json"}, 200)
+#    return jsny(goodStat), 200
+    return (json.dumps(goodStat, indent=2),
+            {"Content-Type": "application/json"})
 
 
 @app_views.route('/stats', strict_slashes=False)
@@ -34,13 +34,13 @@ def counter():
     clasCount = {}
     for name, cls in classes.items():
         clasCount.update({name: storage.count(cls)})
-    return jsny(clasCount), 200
- #   return (json.dumps(clasCount, indent=2),
-#            {"Content-Type": "application/json"})
+ #   return jsny(clasCount), 200
+    return (json.dumps(clasCount, indent=2),
+            {"Content-Type": "application/json"})
 
 
-#@app_views.after_request
-#def add_newline(response):
- #   if response.is_json:
-  #      response.data += b'\n'
-   # return response
+@app_views.after_request
+def add_newline(response):
+    if response.is_json:
+        response.data += b'\n'
+    return response
