@@ -12,7 +12,7 @@ from models import storage
 
 
 @app_views.route("/states", methods=["GET", "POST"], strict_slashes=False)
-@app_views.route("/states/<state_id>", methods=["GET", "DELETE"],
+@app_views.route("/states/<state_id>", methods=["GET", "DELETE", "PUT"],
                  strict_slashes=False)
 def stateEdit(state_id=None):
     """
@@ -86,3 +86,26 @@ def stateEdit(state_id=None):
         else:
             # Abort!
             abort(400, "Not a JSON")
+
+    # Using HTTP PUT
+    elif req.method == "PUT":
+        # The one we are editing
+        seek = "State." + state_id
+        try:
+            toEdit = fullList[seek]
+            if req.is_json:
+                new = req.get_json()
+                for key, valu in new.items():
+                    if (key != "id" and key != "created_at" and
+                        key != "updated_at"):
+                            setattr(toEdit, key, valu)
+                storage.save()
+                data = toEdit.to_dict()
+                # return (json.dumps(data, indent=2),
+                #        {"Content-Type": "application/json"}), 200
+                # Sadly, i can not prettify it
+                return jsny(data), 201
+            else:
+                abort(400, 'Not a JSON')
+        except KeyError:
+            abort(404)
