@@ -19,7 +19,7 @@ app.register_blueprint(app_views)
 def pageNotFound(error):
     """Handels the 404 page"""
     badStat = {"error": "Not found"}
-    data = json.dumps(badStat, indent=2) + "\n"
+    data = json.dumps(badStat, indent=2)
     return data, {"Content-Type": "application/json"}
 
 
