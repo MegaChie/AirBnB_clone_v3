@@ -35,15 +35,17 @@ def stateEdit(state_id=None):
             for name in fullList.values():
                 entry = name.to_dict()
                 data.append(entry)
-            return (json.dumps(data, indent=2, sort_keys=True),
-                    {"Content-Type": "application/json"})
+           # return (json.dumps(data, indent=2, sort_keys=True),
+            #        {"Content-Type": "application/json"})
+            return jsny(data)
         # When there"s an ID
         seek = "State." + state_id
         # Search for the value
         try:
             found = fullList[seek].to_dict()
-            return (json.dumps(found, indent=2, sort_keys=True),
-                    {"Content-Type": "application/json"})
+           # return (json.dumps(found, indent=2, sort_keys=True),
+            #        {"Content-Type": "application/json"})
+            return jsny(found)
         except KeyError:
             abort(404)
 
@@ -59,8 +61,9 @@ def stateEdit(state_id=None):
             storage.delete(fullList[seek])
             storage.save()
             emptData = {}
-            return (json.dumbs(emptData),
-                    {"Content-Type": "application/json"}), 200
+            # return (json.dumbs(emptData),
+             #       {"Content-Type": "application/json"}), 200
+            return jsny(emptData), 200
         except KeyError:
             # No object with such ID
             abort(404)
