@@ -2,7 +2,6 @@
 """Amenity View"""
 from api.v1.views import app_views
 from flask import jsonify as jsny, abort, request as req
-from models.amenity import Amenity
 from models import storage
 
 
@@ -36,10 +35,10 @@ def amenAPI(amenity_id=None):
         try:
             found = fullList[seek]
             data = found.to_dict()
-            return jsny(data)
+            return jsny(data), 200
         except KeyError:
             abort(404)
-    
+
     # Using HTTP DELETE
     if req.method == "DELETE":
         try:
@@ -50,7 +49,7 @@ def amenAPI(amenity_id=None):
             return jsny(emptData), 200
         except Exception:
             abort(404)
-    
+
     # Using HTTP POST
     if req.method == "POST":
         if req.is_json:
@@ -65,7 +64,7 @@ def amenAPI(amenity_id=None):
             return jsny(data), 201
         else:
             abort(400, "Missing name")
-    
+
     # Using HTTP PUT
     if req.method == "PUT":
         seek = "Amenity." + amenity_id
@@ -83,6 +82,6 @@ def amenAPI(amenity_id=None):
             return jsny(data), 200
         except KeyError:
             abort(404)
-    
+
     else:
         abort(501)
