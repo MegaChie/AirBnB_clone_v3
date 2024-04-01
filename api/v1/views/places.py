@@ -119,7 +119,7 @@ def places_search():
     if not places:
         places = storage.all(Place).values()
     if reques.get('amenities'):
-        listAmenity = [storage.get(Amenity, id) for id in reques.get('amenities')]
+        listAmet = [storage.get(Amenity, id) for id in reques.get('amenities')]
         currentPort = getenv('HBNB_API_PORT')
         port = 5000 if not currentPort else currentPort
         loopUrl = "http://0.0.0.0:{}/api/v1/places/".format(port)
@@ -131,7 +131,7 @@ def places_search():
             res = request.get(url)
             amnityInpage = json.loads(res.text)
             amenities = [storage.get(Amenity, o['id']) for o in amnityInpage]
-            for amenity in listAmenity:
+            for amenity in listAmet:
                 if amenity not in amenities:
                     places.pop(i)
                     breakPoint -= 1
