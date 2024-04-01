@@ -75,7 +75,7 @@ def amenity_methods(amenity_id=None):
 
             for key, valu in edit.items():
                 if (seek != "id" and seek != "created_at"
-                    and seek != "updated_at"):
+                   and seek != "updated_at"):
                     setattr(toEdit, key, valu)
 
             storage.save()
