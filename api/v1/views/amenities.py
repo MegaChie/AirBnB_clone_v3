@@ -3,78 +3,86 @@
 """
 
 from api.v1.views import app_views
-from flask import jsonify, abort, request
+from flask import jsonify as jsny, abort, request as req
 from models import storage
 
 
-@app_views.route('/amenities', methods=['GET', 'POST'], strict_slashes=False)
-@app_views.route('/amenities/<amenity_id>', methods=['GET', 'DELETE', 'PUT'],
+@app_views.route("/amenities", methods=["GET", "POST"], strict_slashes=False)
+@app_views.route("/amenities/<amenity_id>", methods=["GET", "DELETE", "PUT"],
                  strict_slashes=False)
 def amenity_methods(amenity_id=None):
     """Handle requests to API for amentities
     """
     from models.amenity import Amenity
-    amenities = storage.all(Amenity)
+    fullList = storage.all(Amenity)
 
-    # GET REQUESTS
-    if request.method == 'GET':
-        if not amenity_id:  # if no id specified, return all
-            return jsonify([obj.to_dict() for obj in amenities.values()])
+    # Using HTTP GET
+    if req.method == "GET":
+        if not amenity_id:
+            # return jsonify([obj.to_dict() for obj in fullList.values()])
+            data = []
+            for name in fullList.values():
+                entry = name.to_dict()
+                data.append(entry)
+            return jsny(data)
 
-        key = 'Amenity.' + amenity_id
-        try:  # if obj exists in dictionary, convert from obj -> dict -> json
-            return jsonify(amenities[key].to_dict())
-        except KeyError:
-            abort(404)  # Amenity with amenity_id does not exist
-
-    # DELETE REQUESTS
-    elif request.method == 'DELETE':
+        seek = "Amenity." + amenity_id
         try:
-            key = 'Amenity.' + amenity_id
-            storage.delete(amenities[key])
+            # return jsonify(fullList[seek].to_dict())
+            data = fullList[seek].to_dict()
+            return jsny(data)
+        except KeyError:
+            abort(404)
+
+    # Using HTTP DELETE
+    elif req.method == "DELETE":
+        try:
+            seek = "Amenity." + amenity_id
+            storage.delete(fullList[seek])
             storage.save()
-            return jsonify({}), 200
+            emptData = {}
+            return jsny(emptData), 200
         except:
             abort(404)
 
-    # POST REQUESTS
-    elif request.method == 'POST':
-        # convert JSON request to dict
-        if request.is_json:
-            body_request = request.get_json()
+    # Using HTTP POST
+    elif req.method == "POST":
+        if req.is_json:
+            new = req.get_json()
         else:
-            abort(400, 'Not a JSON')
+            abort(400, "Not a JSON")
 
         # instantiate, store, and return new Amenity object
-        if 'name' in body_request:
-            new_amenity = Amenity(**body_request)
-            storage.new(new_amenity)
+        if "name" in new:
+            newAmen = Amenity(**new)
+            storage.new(newAmen)
             storage.save()
-            return jsonify(new_amenity.to_dict()), 201
-        else:  # if request does not contain required attribute
-            abort(400, 'Missing name')
+            data = newAmen.to_dict()
+            # return jsonify(newAmen.to_dict()), 201
+            return jsny(data), 201
+        else:
+            abort(400, "Missing name")
 
-    # PUT REQUESTS
-    elif request.method == 'PUT':
-        key = 'Amenity.' + amenity_id
+    # Using HTTP PUT
+    elif req.method == "PUT":
+        seek = "Amenity." + amenity_id
         try:
-            amenity = amenities[key]
-
-            # convert JSON request to dict
-            if request.is_json:
-                body_request = request.get_json()
+            toEdit = fullList[seek]
+            if req.is_json:
+                edit = req.get_json()
             else:
-                abort(400, 'Not a JSON')
+                abort(400, "Not a JSON")
 
-            for key, val in body_request.items():
-                if key != 'id' and key != 'created_at' and key != 'updated_at':
-                    setattr(amenity, key, val)
+            for key, valu in edit.items():
+                if (seek != "id" and seek != "created_at"
+                    and seek != "updated_at"):
+                    setattr(toEdit, key, valu)
 
             storage.save()
-            return jsonify(amenity.to_dict()), 200
+            data = toEdit.to_dict()
+            return jsny(data), 200
         except KeyError:
             abort(404)
 
-    # UNSUPPORTED REQUESTS
     else:
         abort(501)
