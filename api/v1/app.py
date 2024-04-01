@@ -8,11 +8,13 @@ from flask import Flask as fl
 from flask import jsonify as jsny
 from models import storage
 from api.v1.views import app_views
+from flask_cors import CORS
 
 # App name and start
 app = fl(__name__)
 # Blueprint
 app.register_blueprint(app_views)
+CORS(app, resources={r"/*": {"origins": "0.0.0.0"}})
 
 
 @app.errorhandler(404)
