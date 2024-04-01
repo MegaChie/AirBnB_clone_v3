@@ -86,3 +86,36 @@ class TestFileStorage(unittest.TestCase):
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_save(self):
         """Test that save properly saves objects to file.json"""
+    
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_count(self):
+        """Tests the newly introduced count method"""
+        models.storage.reload()
+        state = State(name="MEga")
+        user = User(email="Mega.com", password="Mega22")
+        models.storage.new(state)
+        models.storage.new(user)
+        models.storage.save()
+        self.assertEqual(models.storage.count(), 2)
+        models.storage.delete(user)
+        models.storage.delete(state)
+    
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_get(self):
+        """Tests the newly introduced get method"""
+        models.storage.reload()
+        user = User(email="Mega.com", password="Mega22")
+        models.storage.new(user)
+        models.storage.save()
+        user_id = user.id
+        wrong_id = '69'
+        self.assertTrue(models.storage.get(User, user_id) is user)
+        self.assertIsNone(models.storage.get(User, wrong_id))
+        models.storage.delete(user)
+        state = State(name='Heaven')
+        models.storage.new(state)
+        models.storage.save()
+        state_id = state.id
+        wrong_id = 'Toast'
+        self.assertTrue(models.storage.get(State, state_id) is state)
+        self.assertIsNone(models.storage.get(State, wrong_id))
