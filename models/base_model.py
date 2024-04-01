@@ -29,9 +29,9 @@ class BaseModel:
     def __init__(self, *args, **kwargs):
         """Initialization of the base model"""
         if kwargs:
-            for key, valu in kwargs.items():
+            for key, value in kwargs.items():
                 if key != "__class__":
-                    setattr(self, key, valu)
+                    setattr(self, key, value)
             if kwargs.get("created_at", None) and type(self.created_at) is str:
                 self.created_at = datetime.strptime(kwargs["created_at"], time)
             else:
@@ -59,7 +59,7 @@ class BaseModel:
         models.storage.save()
 
     def to_dict(self, save_check=False):
-        """returns a dictionary containing all keys/valus of the instance"""
+        """returns a dictionary containing all keys/values of the instance"""
         new_dict = self.__dict__.copy()
         if "created_at" in new_dict:
             new_dict["created_at"] = new_dict["created_at"].strftime(time)
