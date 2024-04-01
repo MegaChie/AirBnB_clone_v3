@@ -98,7 +98,7 @@ def reviewID(review_id):
             storage.save()
             emptData = {}
             return jsonify(emptData), 200
-        except:
+        except KeyError:
             abort(404)
 
     # Using HTTP PUT
