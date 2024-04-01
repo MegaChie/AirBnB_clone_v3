@@ -101,7 +101,8 @@ def putReview(review_id):
     if not reques:
         abort(400, "Not a JSON")
     for k, value in reques.items():
-        if k not in ['id', 'user_id', 'place_id', 'created_at', 'updated_at']:
+        if (k =! "id" and k != "user_id" and k =! "place_id"
+           and k != "created_at" and k != "updated_at"):
             setattr(review, k, value)
     storage.save()
     return make_response(jsny(review.to_dict()), 200)
