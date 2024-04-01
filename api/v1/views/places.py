@@ -123,9 +123,7 @@ def places_search():
     if reques.get('amenities'):
         listAmenity = [storage.get("Amenity", id) for id in reques.get('amenities')]
         currentPort = getenv('HBNB_API_PORT')
-        port = 5000
-        if currentPort:
-            port = currentPort
+        port = 5000 if not currentPort else currentPort
         loopUrl = "http://0.0.0.0:{}/api/v1/places/".format(port)
         i = 0
         breakPoint = len(places)
