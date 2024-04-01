@@ -96,13 +96,13 @@ def places_search():
     """
     get place depend
     """
-    reques = req.get_json()
+    reques = request.get_json()
     if reques is None:
         abort(400, "Not a JSON")
-    if reques is None or (req.get('states') is None and
-                       req.get('cities') is None and
-                       req.get('amenities') is None
-                      ):
+    if reques is None or (reques.get('states') is None and
+                          reques.get('cities') is None and
+                          reques.get('amenities') is None
+                          ):
         listPlaces = storage.all(Place)
         return jsonify([place.to_dict() for place in listPlaces.values()])
     places = []
@@ -117,10 +117,9 @@ def places_search():
         for c in cities:
             for p in c.places:
                 if p not in places:
-                    places.append(place)
+                    places.append(p)
     if not places:
-        places = storage.all(Place)
-        places = [p for p in places.values()]
+        places = storage.all(Place).values()
     if reques.get('amenities'):
         listAmenity = [storage.get("Amenity", id) for id in reques.get('amenities')]
         currentPort = getenv('HBNB_API_PORT')
@@ -132,9 +131,8 @@ def places_search():
         breakPoint = len(places)
         while i < breakPoint:
             place = places[i]
-            url = loopUrl + '{}/amenities'
-            req = url.format(place.id)
-            res = req.get(req)
+            url = loopUrl + '{}/amenities'.format(place.id)
+            res = req.get(url)
             amnityInpage = json.loads(res.text)
             amenities = [storage.get("Amenity", o['id']) for o in amnityInpage]
             for amenity in listAmenity:
