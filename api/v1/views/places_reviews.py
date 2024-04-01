@@ -8,62 +8,40 @@ from models.review import Review
 from models.user import User
 
 
-@app_views.route("/places/<place_id>/reviews", methods=["GET", "POST"],
-                 strict_slashes=False)
-def reviewAPI(place_id):
-    """
-     - GET: Retrieves the list of all reviews if place ID is passed.
-            Or a specific object if it is passed.
-     - POST: Adds new object if a link exsists.
-             Returns error code if other
-    """
-    fullRevw = storage.all(Review)
-    fullPlac = storage.all(Place)
+@app_views.route('/places/<place_id>/reviews',
+                 methods=['GET'], strict_slashes=False)
+def getReivewList(place_id):
+    """get list of Review"""
+    place = storage.get(Place, place_id)
+    if not place:
+        abort(404)
+    return jsny([review.to_dict() for review in place.reviews])
 
-    # Using HTTP GET
-    if req.method == "GET":
-        seek = "Place." + place_id
-        try:
-            found = fullPlac[seek]
-            data = []
-            for name in found.fullRevw:
-                entry = name.to_dict()
-                data.append(entry)
-            return jsny(data)
-        except KeyError:
-            abort(404)
 
-    # Using HTTP POST
-    elif req.method == "POST":
-        if req.is_json:
-            new = req.get_json()
-        else:
-            abort(400, "Not a JSON")
-        if "user_id" not in new:
-            abort(400, "Missing user_id")
-        elif "text" not in new:
-            abort(400, "Missing text")
-        else:
-            fullUser = storage.all(User)
-            user_id = new["user_id"]
-            foundUser = []
-            for name in fullUser.values():
-                entry = name.id
-                foundUser.append(entry)
-            if user_id not in foundUser:
-                abort(404)
-            seek = "Place." + place_id
-            if seek not in fullPlac:
-                abort(404)
-            new.update({"place_id": place_id})
-            newRev = Review(**new)
-            storage.new(newRev)
-            storage.save()
-            data = newRev.to_dict()
-            return jsny(data), 201
+@app_views.route('/places/<place_id>/reviews',
+                 methods=['POST'], strict_slashes=False)
+def newReview(place_id):
+    """create new Review"""
+    place = storage.get(Place, place_id)
+    if not place:
+        abort(404)
+    revi = req.get_json()
+    if not revi:
+        abort(400, "Not a JSON")
+    if 'uid' not in revi:
+        abort(400, "Missing uid")
+    uid = revi['uid']
+    user = storage.get(User, uid)
+    if not user:
+        abort(404)
+    if 'text' not in revi:
+        abort(400, "Missing text")
 
-    else:
-        abort(501)
+    review = Review(**revi)
+    setattr(review, 'place_id', place_id)
+    storage.new(review)
+    storage.save()
+    return make_response(jsny(review.to_dict()), 201)
 
 
 @app_views.route('/reviews/<review_id>', methods=['GET'],
@@ -99,7 +77,7 @@ def putReview(review_id):
     if not reques:
         abort(400, "Not a JSON")
     for k, value in reques.items():
-        if k not in ['id', 'user_id', 'place_id', 'created_at', 'updated_at']:
+        if k not in ['id', 'uid', 'place_id', 'created_at', 'updated_at']:
             setattr(review, k, value)
     storage.save()
     return make_response(jsny(review.to_dict()), 200)
