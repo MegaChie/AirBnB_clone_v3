@@ -134,6 +134,7 @@ class TestFileStorage(unittest.TestCase):
         """Tests the newly introduced get method"""
         storage = FileStorage()
         storage.save()
+        # create new object
         state = State()
         storage.new(state)
         state_id = state.to_dict()['id']
