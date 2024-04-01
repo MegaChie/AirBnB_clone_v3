@@ -108,7 +108,7 @@ class TestFileStorage(unittest.TestCase):
         models.storage.new(user)
         models.storage.save()
         user_id = user.id
-        wrong_id = '69'
+        wrong_id = '666'
         self.assertTrue(models.storage.get(User, user_id) is user)
         self.assertIsNone(models.storage.get(User, wrong_id))
         models.storage.delete(user)
