@@ -42,7 +42,7 @@ def amenity_methods(amenity_id=None):
             storage.save()
             emptData = {}
             return jsny(emptData), 200
-        except:
+        except Exception:
             abort(404)
 
     # Using HTTP POST
