@@ -130,7 +130,7 @@ def places_search():
         while i < breakPoint:
             place = places[i]
             url = loopUrl + '{}/amenities'.format(place.id)
-            res = req.get(url)
+            res = request.get(url)
             amnityInpage = json.loads(res.text)
             amenities = [storage.get("Amenity", o['id']) for o in amnityInpage]
             for amenity in listAmenity:
