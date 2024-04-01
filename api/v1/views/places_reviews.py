@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """API endpoint for the reviews object"""
 from api.v1.views import app_views
-from flask import jsonify as jsny, make_response, abort, req as req
+from flask import jsonify as jsny, make_response, abort, request as req
 from models import storage
 from models.place import Place
 from models.review import Review
@@ -17,21 +17,20 @@ def reviewAPI(place_id):
      - POST: Adds new object if a link exsists.
              Returns error code if other
     """
-    fullRev = storage.all(Review)
+    fullRevw = storage.all(Review)
     fullPlac = storage.all(Place)
 
-    # Uaing HTTP GET
+    # Using HTTP GET
     if req.method == "GET":
         seek = "Place." + place_id
         try:
             found = fullPlac[seek]
-            # reviews_list = [review.to_dict() for review in place.reviews]
             data = []
-            for name in found.fullRev:
-                entry = name.te_dict()
+            for name in found.fullRevw:
+                entry = name.to_dict()
                 data.append(entry)
             return jsny(data)
-        except:
+        except KeyError:
             abort(404)
 
     # Using HTTP POST
@@ -47,15 +46,14 @@ def reviewAPI(place_id):
         else:
             fullUser = storage.all(User)
             user_id = new["user_id"]
-            # all_user_ids = [user_ids.id for user_ids in fullUser.valus()]
-            foundRev = []
-            for userID in fullUser.valus():
-                entry = userID.id
-                foundRev.append(entry)
-            if user_id not in foundRev:
+            foundUser = []
+            for name in fullUser.values():
+                entry = name.id
+                foundUser.append(entry)
+            if user_id not in foundUser:
                 abort(404)
             seek = "Place." + place_id
-            if seek not in places:
+            if seek not in fullPlac:
                 abort(404)
             new.update({"place_id": place_id})
             newRev = Review(**new)
@@ -105,4 +103,3 @@ def putReview(review_id):
             setattr(review, k, value)
     storage.save()
     return make_response(jsny(review.to_dict()), 200)
-
