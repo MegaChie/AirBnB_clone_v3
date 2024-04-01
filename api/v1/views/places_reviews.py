@@ -30,8 +30,8 @@ def reviewAPI(place_id):
             for name in found.fullRev:
                 entry = name.te_dict()
                 data.append(entry)
-            return jsny(date)
-        except seekError:
+            return jsny(data)
+        except:
             abort(404)
 
     # Using HTTP POST
@@ -62,7 +62,7 @@ def reviewAPI(place_id):
             storage.new(newRev)
             storage.save()
             data = newRev.to_dict()
-            return jsonify(data), 201
+            return jsny(data), 201
 
     else:
         abort(501)
