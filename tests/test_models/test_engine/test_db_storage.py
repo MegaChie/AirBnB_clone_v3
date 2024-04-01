@@ -92,7 +92,7 @@ class TestFileStorage(unittest.TestCase):
         """Tests the newly introduced count method"""
         models.storage.reload()
         state = State(name="Hell")
-        user = User(email="1@2.com", password="123")
+        user = User(email="Mega.com", password="Mega22")
         models.storage.new(state)
         models.storage.new(user)
         models.storage.save()
@@ -104,7 +104,7 @@ class TestFileStorage(unittest.TestCase):
     def test_get(self):
         """Tests the newly introduced get method"""
         models.storage.reload()
-        user = User(email="1@2.com", password="123")
+        user = User(email="Mega.com", password="Mega22")
         models.storage.new(user)
         models.storage.save()
         user_id = user.id
