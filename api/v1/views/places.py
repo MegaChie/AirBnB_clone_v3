@@ -5,10 +5,9 @@ from flask import abort, jsonify, make_response, request
 from models import storage
 from models.amenity import Amenity
 from models.city import City
+from models.user import User
 from models.place import Place
 from models.state import State
-from models.user import User
-import requests
 import json
 from os import getenv
 
@@ -107,13 +106,13 @@ def places_search():
         return jsonify([place.to_dict() for place in listPlaces.values()])
     places = []
     if reques.get('states'):
-        states = [storage.get("State", id) for id in reques.get('states')]
+        states = [storage.get(State, id) for id in reques.get('states')]
         for state in states:
             for city in state.cities:
                 for place in city.places:
                     places.append(place)
     if reques.get('cities'):
-        cities = [storage.get("City", id) for id in reques.get('cities')]
+        cities = [storage.get(City, id) for id in reques.get('cities')]
         for c in cities:
             for p in c.places:
                 if p not in places:
@@ -121,7 +120,7 @@ def places_search():
     if not places:
         places = storage.all(Place).values()
     if reques.get('amenities'):
-        listAmenity = [storage.get("Amenity", id) for id in reques.get('amenities')]
+        listAmenity = [storage.get(Amenity, id) for id in reques.get('amenities')]
         currentPort = getenv('HBNB_API_PORT')
         port = 5000 if not currentPort else currentPort
         loopUrl = "http://0.0.0.0:{}/api/v1/places/".format(port)
@@ -132,7 +131,7 @@ def places_search():
             url = loopUrl + '{}/amenities'.format(place.id)
             res = request.get(url)
             amnityInpage = json.loads(res.text)
-            amenities = [storage.get("Amenity", o['id']) for o in amnityInpage]
+            amenities = [storage.get(Amenity, o['id']) for o in amnityInpage]
             for amenity in listAmenity:
                 if amenity not in amenities:
                     places.pop(i)
