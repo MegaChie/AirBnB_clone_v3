@@ -68,57 +68,41 @@ def reviewAPI(place_id):
         abort(501)
 
 
-@app_views.route("/reviews/<review_id>", methods=["GET", "DELETE", "PUT"],
+@app_views.route('/reviews/<review_id>', methods=['GET'],
                  strict_slashes=False)
-def reviewID(review_id):
-    """Review object methods"""
-    fullRev = storage.all(Review)
+def getReview(review_id):
+    """get Review"""
+    review = storage.get(Review, review_id)
+    if not review:
+        abort(404)
+    return jsny(review.to_dict())
 
-    # Using HTTP GET
-    if req.method == "GET":
-        if not review_id:
-            # return jsonify([obj.to_dict() for obj in reviews.valus()])
-            data = []
-            for name in fullRev.valus():
-                entry = name.to_dict()
-                data.append(entry)
-            return jsny(data)
-        seek = "Review." + review_id
-        try:
-            data = reviews[seek].to_dict()
-            return jsonify(data)
-        except seekError:
-            abort(404)
 
-    # Using HTTP DELETE
-    elif req.method == "DELETE":
-        try:
-            seek = "Review." + review_id
-            storage.delete(reviews[seek])
-            storage.save()
-            emptData = {}
-            return jsonify(emptData), 200
-        except KeyError:
-            abort(404)
+@app_views.route('/reviews/<review_id>',
+                 methods=['DELETE'], strict_slashes=False)
+def DeleteReview(review_id):
+    """delete Review"""
+    review = storage.get(Review, review_id)
+    if not review:
+        abort(404)
+    review.delete()
+    storage.save()
+    return make_response(jsny({}), 200)
 
-    # Using HTTP PUT
-    elif req.method == "PUT":
-        seek = "Review." + review_id
-        try:
-            toEdit = reviews[seek]
-        except KeyError:
-            abort(404)
-        if req.is_json:
-            new = req.get_json()
-        else:
-            abort(400, "Not a JSON")
-        for key, valu in new.items():
-            if (key != "id" and key != "user_id" and key != "place_id"
-               and key != "created_at" and key != "updated_at"):
-                setattr(toEdit, key, valu)
-            storage.save()
-            data = toEdit.to_dict()
-            return data, 200
 
-    else:
-        abort(501)
+@app_views.route('/reviews/<review_id>',
+                 methods=['PUT'], strict_slashes=False)
+def putReview(review_id):
+    """put review"""
+    review = storage.get(Review, review_id)
+    if not review:
+        abort(404)
+    reques = req.get_json()
+    if not reques:
+        abort(400, "Not a JSON")
+    for k, value in reques.items():
+        if k not in ['id', 'user_id', 'place_id', 'created_at', 'updated_at']:
+            setattr(review, k, value)
+    storage.save()
+    return make_response(jsny(review.to_dict()), 200)
+
