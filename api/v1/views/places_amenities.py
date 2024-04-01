@@ -34,7 +34,7 @@ def link(place_id=None, amenity_id=None):
             entry = name.to_dict()
             data.append(entry)
         return jsny(data)
-    
+
     # Using HTTP DELETE
     elif req.method == "DELETE":
         # Pulling objects
@@ -49,7 +49,7 @@ def link(place_id=None, amenity_id=None):
         storage.save()
         emptData = {}
         return jsny(emptData), 200
-    
+
     # Using HTTP POST
     elif req.method == "POST":
         # Pulling objects
@@ -68,6 +68,6 @@ def link(place_id=None, amenity_id=None):
         storage.save()
         data = seekAmen.to_dict()
         return jsny(data), 201
-    
+
     else:
         abort(501)
