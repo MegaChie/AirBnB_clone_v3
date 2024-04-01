@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """API endpoint for the reviews object"""
 from api.v1.views import app_views
-from flask import jsonify as jsny, abort, req as req
+from flask import jsonify as jsny, make_response, abort, req as req
 from models import storage
 from models.place import Place
 from models.review import Review
