@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-"""Amenity API definition of the objects under the same name"""
 from api.v1.views import app_views
 from flask import jsonify as jsny, abort, request as req
 from models import storage
