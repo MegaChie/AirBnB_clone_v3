@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """API endpoint for the reviews object"""
 from api.v1.views import app_views
-from flask import jsonify as jsny, abort, request as req
+from flask import jsonify as jsny, make_response, abort, request as req
 from models import storage
 from models.place import Place
 from models.review import Review
@@ -66,11 +66,40 @@ def reviewAPI(place_id):
         abort(501)
 
 
-@app_views.route("/reviews/<review_id>", methods=["GET", "DELETE", "PUT"],
+@app_views.route('/reviews/<review_id>', methods=['GET'],
                  strict_slashes=False)
-def reviewID(review_id):
-    """
-     - DELETE: Remove an object. Or returns error code if other.
-     - PUT: Updates object is correct arguments passed
-    """
-    fullRevw = storage.all(Review)
+def getReview(review_id):
+    """get Review"""
+    review = storage.get(Review, review_id)
+    if not review:
+        abort(404)
+    return jsny(review.to_dict())
+
+
+@app_views.route('/reviews/<review_id>',
+                 methods=['DELETE'], strict_slashes=False)
+def DeleteReview(review_id):
+    """delete Review"""
+    review = storage.get(Review, review_id)
+    if not review:
+        abort(404)
+    review.delete()
+    storage.save()
+    return make_response(jsny({}), 200)
+
+
+@app_views.route('/reviews/<review_id>',
+                 methods=['PUT'], strict_slashes=False)
+def putReview(review_id):
+    """put review"""
+    review = storage.get(Review, review_id)
+    if not review:
+        abort(404)
+    reques = req.get_json()
+    if not reques:
+        abort(400, "Not a JSON")
+    for k, value in reques.items():
+        if k not in ['id', 'user_id', 'place_id', 'created_at', 'updated_at']:
+            setattr(review, k, value)
+    storage.save()
+    return make_response(jsny(review.to_dict()), 200)
