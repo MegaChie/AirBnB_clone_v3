@@ -38,7 +38,7 @@ def amenity_methods(amenity_id=None):
             storage.save()
             emptData = {}
             return jsny(emptData), 200
-        except:
+        except Exception:
             abort(404)
 
     # Using HTTP POST
@@ -71,7 +71,7 @@ def amenity_methods(amenity_id=None):
 
             for key, valu in edit.items():
                 if (seek != "id" and seek != "created_at"
-                    and seek != "updated_at"):
+                   and seek != "updated_at"):
                     setattr(toEdit, key, valu)
 
             storage.save()
