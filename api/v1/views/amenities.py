@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+"""API definition for the Amenity object"""
 from api.v1.views import app_views
 from flask import jsonify as jsny, abort, request as req
 from models import storage
@@ -7,7 +9,8 @@ from models import storage
 @app_views.route("/amenities/<amenity_id>", methods=["GET", "DELETE", "PUT"],
                  strict_slashes=False)
 def amenity_methods(amenity_id=None):
-    """Handle requests to API for amentities
+    """
+    Handle requests to API for amentities
     """
     from models.amenity import Amenity
     fullList = storage.all(Amenity)
