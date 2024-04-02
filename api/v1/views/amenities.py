@@ -73,8 +73,8 @@ def amenity_methods(amenity_id=None):
                 abort(400, "Not a JSON")
 
             for key, valu in edit.items():
-                if (seek != "id" and seek != "created_at"
-                   and seek != "updated_at"):
+                if seek != "id" and seek != "created_at" and\
+                   seek != "updated_at":
                     setattr(toEdit, key, valu)
 
             storage.save()
