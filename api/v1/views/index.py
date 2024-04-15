@@ -1,40 +1,30 @@
 #!/usr/bin/python3
-"""Gives the API its status"""
-from api.v1.views import app_views
-from flask import jsonify as jsny
+""" Index """
+from models.amenity import Amenity
+from models.city import City
+from models.place import Place
+from models.review import Review
+from models.state import State
+from models.user import User
 from models import storage
-
-import json
-
-
-@app_views.route("/status", strict_slashes=False)
-def getStat():
-    """returns the status of the API if working"""
-    goodStat = {"status": "OK"}
-    # return (json.dumps(goodStat, indent=2),
-    #        {"Content-Type": "application/json"})
-    return jsny(goodStat)
+from api.v1.views import app_views
+from flask import jsonify
 
 
-@app_views.route("/stats", strict_slashes=False)
-def counter():
-    """Build a dict of classes count using the count method"""
-    # importing classes
-    from models.amenity import Amenity
-    from models.city import City
-    from models.place import Place
-    from models.review import Review
-    from models.state import State
-    from models.user import User
+@app_views.route('/status', methods=['GET'], strict_slashes=False)
+def status():
+    """ Status of API """
+    return jsonify({"status": "OK"})
 
-    # look up dict
-    classes = {"amenities": Amenity, "cities": City,
-               "places": Place, "reviews": Review,
-               "states": State, "users": User}
-    # empty dict to fill using the method
-    clasCount = {}
-    for name, cls in classes.items():
-        clasCount.update({name: storage.count(cls)})
-    # return (json.dumps(clasCount, indent=2),
-    #        {"Content-Type": "application/json"})
-    return jsny(clasCount)
+
+@app_views.route('/stats', methods=['GET'], strict_slashes=False)
+def number_objects():
+    """ Retrieves the number of each objects by type """
+    classes = [Amenity, City, Place, Review, State, User]
+    names = ["amenities", "cities", "places", "reviews", "states", "users"]
+
+    num_objs = {}
+    for i in range(len(classes)):
+        num_objs[names[i]] = storage.count(classes[i])
+
+    return jsonify(num_objs)

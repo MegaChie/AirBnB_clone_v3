@@ -1,87 +1,94 @@
 #!/usr/bin/python3
-"""API definition for the Amenity object"""
-from api.v1.views import app_views
-from flask import jsonify as jsny, abort, request as req
+""" objects that handles all default RestFul API actions for Amenities"""
+from models.amenity import Amenity
 from models import storage
+from api.v1.views import app_views
+from flask import abort, jsonify, make_response, request
+from flasgger.utils import swag_from
 
 
-@app_views.route("/amenities", methods=["GET", "POST"], strict_slashes=False)
-@app_views.route("/amenities/<amenity_id>", methods=["GET", "DELETE", "PUT"],
+@app_views.route('/amenities', methods=['GET'], strict_slashes=False)
+@swag_from('documentation/amenity/all_amenities.yml')
+def get_amenities():
+    """
+    Retrieves a list of all amenities
+    """
+    all_amenities = storage.all(Amenity).values()
+    list_amenities = []
+    for amenity in all_amenities:
+        list_amenities.append(amenity.to_dict())
+    return jsonify(list_amenities)
+
+
+@app_views.route('/amenities/<amenity_id>/', methods=['GET'],
                  strict_slashes=False)
-def amenity_methods(amenity_id=None):
+@swag_from('documentation/amenity/get_amenity.yml', methods=['GET'])
+def get_amenity(amenity_id):
+    """ Retrieves an amenity """
+    amenity = storage.get(Amenity, amenity_id)
+    if not amenity:
+        abort(404)
+
+    return jsonify(amenity.to_dict())
+
+
+@app_views.route('/amenities/<amenity_id>', methods=['DELETE'],
+                 strict_slashes=False)
+@swag_from('documentation/amenity/delete_amenity.yml', methods=['DELETE'])
+def delete_amenity(amenity_id):
     """
-    Handle requests to API for amentities
+    Deletes an amenity  Object
     """
-    from models.amenity import Amenity
-    fullList = storage.all(Amenity)
 
-    # Using HTTP GET
-    if req.method == "GET":
-        if not amenity_id:
-            # return jsonify([obj.to_dict() for obj in fullList.values()])
-            data = []
-            for name in fullList.values():
-                entry = name.to_dict()
-                data.append(entry)
-            return jsny(data)
+    amenity = storage.get(Amenity, amenity_id)
 
-        seek = "Amenity." + amenity_id
-        try:
-            # return jsonify(fullList[seek].to_dict())
-            data = fullList[seek].to_dict()
-            return jsny(data)
-        except KeyError:
-            abort(404)
+    if not amenity:
+        abort(404)
 
-    # Using HTTP DELETE
-    elif req.method == "DELETE":
-        try:
-            seek = "Amenity." + amenity_id
-            storage.delete(fullList[seek])
-            storage.save()
-            emptData = {}
-            return jsny(emptData), 200
-        except Exception:
-            abort(404)
+    storage.delete(amenity)
+    storage.save()
 
-    # Using HTTP POST
-    elif req.method == "POST":
-        if req.is_json:
-            new = req.get_json()
-        else:
-            abort(400, "Not a JSON")
+    return make_response(jsonify({}), 200)
 
-        # instantiate, store, and return new Amenity object
-        if "name" in new:
-            newAmen = Amenity(**new)
-            storage.new(newAmen)
-            storage.save()
-            data = newAmen.to_dict()
-            # return jsonify(newAmen.to_dict()), 201
-            return jsny(data), 201
-        else:
-            abort(400, "Missing name")
 
-    # Using HTTP PUT
-    elif req.method == "PUT":
-        seek = "Amenity." + amenity_id
-        try:
-            toEdit = fullList[seek]
-            if req.is_json:
-                edit = req.get_json()
-            else:
-                abort(400, "Not a JSON")
+@app_views.route('/amenities', methods=['POST'], strict_slashes=False)
+@swag_from('documentation/amenity/post_amenity.yml', methods=['POST'])
+def post_amenity():
+    """
+    Creates an amenity
+    """
+    if not request.get_json():
+        abort(400, description="Not a JSON")
 
-            for key, valu in edit.items():
-                if seek != "id" and seek != "created_at" and\
-                   seek != "updated_at":
-                    setattr(toEdit, key, valu)
+    if 'name' not in request.get_json():
+        abort(400, description="Missing name")
 
-            storage.save()
-            data = toEdit.to_dict()
-            return jsny(data), 200
-        except KeyError:
-            abort(404)
+    data = request.get_json()
+    instance = Amenity(**data)
+    instance.save()
+    return make_response(jsonify(instance.to_dict()), 201)
 
-    else:
-        abort(501)
+
+@app_views.route('/amenities/<amenity_id>', methods=['PUT'],
+                 strict_slashes=False)
+@swag_from('documentation/amenity/put_amenity.yml', methods=['PUT'])
+def put_amenity(amenity_id):
+    """
+    Updates an amenity
+    """
+    if not request.get_json():
+        abort(400, description="Not a JSON")
+
+    ignore = ['id', 'created_at', 'updated_at']
+
+    amenity = storage.get(Amenity, amenity_id)
+
+    if not amenity:
+        abort(404)
+
+    data = request.get_json()
+    for key, value in data.items():
+        if key not in ignore:
+            setattr(amenity, key, value)
+    storage.save()
+    return make_response(jsonify(amenity.to_dict()), 200)
